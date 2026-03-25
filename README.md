@@ -1,112 +1,170 @@
-# ui-cloner
+# UI Cloner
 
-A Claude Code skill that analyzes UI screenshots and generates a reusable `.skill` file capturing the product's complete design system.
+<p align="center">
+  <strong>像素级 UI 设计系统提取工具</strong><br>
+  <sub>Analyze UI screenshots → Extract complete design system → Generate reusable .skill file</sub>
+</p>
 
-## What It Does
+---
 
-Give it screenshots of any product's UI — it extracts the full design language and packages it as a self-contained skill that anyone can use to reproduce the same UI in any tech stack.
+## 概述
 
-## Installation
+UI Cloner 是一个 Claude Code skill，能够分析任意产品的 UI 截图，提取完整的设计系统，并生成可复用的 `.skill` 文件。任何人都能够使用这个 skill 在任意技术栈中精确复刻相同的 UI。
 
-Copy `ui-cloner.skill` to your Claude Code skills directory:
+### 核心特性
+
+- **🎯 像素级精确提取** - 所有颜色值使用精确 HEX，尺寸精确到 px
+- **📐 完整设计令牌** - 颜色、字体、间距、圆角、阴影
+- **🧩 组件清单** - 所有组件的变体、状态、尺寸规格
+- **📱 布局模式** - 页面模板、网格系统、导航结构
+- **🎨 视觉风格** - 自动识别设计风格（Minimalism、Glassmorphism 等）
+- **⚡ 交互模式** - 推断 hover/focus/loading 等状态行为
+
+---
+
+## 安装
+
+### 方法一：项目本地安装（推荐）
 
 ```bash
-# Project-local (recommended)
 cp ui-cloner.skill .claude/skills/
+```
 
-# Or global
+### 方法二：全局安装
+
+```bash
 cp ui-cloner.skill ~/.claude/skills/
 ```
 
-## Usage
+---
 
-Trigger phrases:
+## 使用方法
 
-- \"Clone this UI\" + screenshot path(s)
-- \"Copy this design\" + image directory
-- \"Extract the design system from these screenshots\"
-- \"Reproduce this page\"
+### 触发短语
 
-Example:
+- "Clone this UI" + 截图路径
+- "Copy this design" + 图片目录
+- "Extract the design system from these screenshots"
+- "Reproduce this page"
+
+### 示例
 
 ```
 Clone this UI from my screenshots: ./designs/dashboard.png ./designs/settings.png
 Product name: acme-app
 ```
 
-## What Gets Generated
-
-For each run, the skill produces a `{product-name}-ui/` directory saved **inside your project** (`.claude/skills/`) by default, containing:
+### 生成的文件结构
 
 ```
 {product-name}-ui/
-├── SKILL.md              # Main design system skill
+├── SKILL.md              # 主 skill 文件
 └── references/
-    ├── design-tokens.md  # Colors, typography, spacing, radius, shadows
-    ├── components.md     # Component inventory with specs and variants
-    ├── layout.md         # Page layouts, grid systems, navigation structure
-    └── style-guide.md    # Visual style, interaction patterns, UX principles
+    ├── design-tokens.md  # 颜色、字体、间距、圆角、阴影
+    ├── components.md     # 组件清单及其变体和状态
+    ├── layout.md         # 页面布局、网格系统、导航结构
+    └── style-guide.md    # 视觉风格、交互模式、UX 原则
 ```
 
-Plus a packaged `{product-name}-ui.skill` file ready to install and share.
+---
 
-## Analysis Dimensions
+## 分析维度
 
-All 5 dimensions are analyzed for every screenshot:
+每个截图都会进行 5 个维度的完整分析：
 
-| Dimension | What's Extracted |
-|---|---|
-| Design Tokens | Colors (full palette), typography scale, spacing grid, border radius, shadows |
-| Components | All UI components with variants, states, sizes, and anatomy |
-| Layout Structure | Page layouts, grid system, navigation patterns, responsive breakpoints |
-| Visual Style | Style category (glassmorphism/minimalism/etc.), iconography, illustration style |
-| Interaction Patterns | Inferred hover/focus/loading states, animation style, feedback patterns |
+| 维度 | 提取内容 |
+|------|----------|
+| **设计令牌** | 完整调色板、字体尺度、间距网格、圆角、阴影 |
+| **组件清单** | 所有 UI 组件及其变体、状态、尺寸、结构 |
+| **布局结构** | 页面布局、网格系统、导航模式、响应式断点 |
+| **视觉风格** | 风格分类（Glassmorphism/Minimalism 等）、图标风格、插画风格 |
+| **交互模式** | 推断 hover/focus/loading 状态、动画风格、反馈模式 |
 
-## Visual Verification (Optional)
+---
 
-After generating the skill, you'll be asked:
+## 视觉验证（可选）
 
-> \"Would you like me to generate a sample page and compare it visually against your original screenshots?\"
+生成 skill 后，会询问：
 
-If you agree, the skill will:
-1. Generate a sample page using `ui-ux-pro-max`
-2. Diff it against your original screenshot using visual AI comparison
-3. Auto-correct any critical discrepancies in the spec files
-4. Repeat until no critical differences remain
+> "是否需要生成示例页面并与原始截图进行视觉对比验证？"
 
-## Workflow
+如果同意，工具将：
+1. 使用 `ui-ux-pro-max` 生成示例页面
+2. 使用视觉 AI 对比生成页面与原始截图
+3. 自动修正关键差异
+4. 循环验证直到无关键差异
 
-```
-Screenshots → Analyze (×N pages) → Synthesize Design System
-    → Generate skill files → Package .skill → [Visual Verify & Correct]
-    → Ready to use with any tech stack
-```
+---
 
-## Using the Generated Skill
+## 使用生成的 Skill
 
-Once installed, the generated `{product-name}-ui` skill can be used in any conversation:
+安装后，可在任何对话中使用：
 
 ```
-\"Use the acme-app-ui skill to build the login page in React + Tailwind\"
-\"Add a settings page that matches the acme-app-ui design system\"
-\"Build a dashboard using Next.js following the acme-app-ui style\"
+"Use the acme-app-ui skill to build the login page in React + Tailwind"
+"Add a settings page that matches the acme-app-ui design system"
+"Build a dashboard using Next.js following the acme-app-ui style"
 ```
 
-Tech stack is never locked into the skill — specify it at usage time.
+技术栈在调用时指定，skill 本身不绑定任何技术栈。
 
-## Requirements
+---
 
-- Claude Code with `mcp__zai-mcp-server` MCP server (for visual analysis and diffing)
-- `ui-ux-pro-max` skill installed (optional, for code generation and visual verification)
-- `skill-creator` skill installed (for packaging)
-
-## File Structure
+## 项目结构
 
 ```
-ui-cloner/
-├── SKILL.md                        # Main skill — workflow and instructions
-├── ui-cloner.skill                 # Packaged skill file
-└── references/
-    ├── analysis-guide.md           # Per-dimension extraction instructions
-    └── skill-template.md           # Templates for generated skill files
+copy-ui-skill/
+├── README.md                    # 项目文档
+├── SKILL.md                     # 主 skill 定义
+├── ui-cloner.skill              # 打包的 skill 文件
+├── references/
+│   ├── analysis-guide.md        # 各维度提取指南
+│   └── skill-template.md        # 生成的 skill 文件模板
+├── .claude/skills/              # 示例生成的 skills
+│   ├── demo-ui/                 # Demo App 示例
+│   └── xshop-ui/                # XShop 示例
+└── assets/                      # 截图和资源
 ```
+
+---
+
+## 示例
+
+### demo-ui 示例
+
+基于 `demo/1.jpeg` 提取的设计系统：
+
+- **分析轮次**: 6 轮迭代像素级分析
+- **主色调**: 4 个 + 功能色 8 个
+- **字体尺度**: 6 级
+- **间距基准**: 8px
+- **核心组件**: 10 个
+- **状态定义**: 完整 default/hover/active/disabled
+
+查看: `.claude/skills/demo-ui/`
+
+---
+
+## 依赖
+
+- Claude Code with `mcp__zai-mcp-server` MCP server（用于视觉分析和对比）
+- `ui-ux-pro-max` skill（可选，用于代码生成和视觉验证）
+- `skill-creator` skill（可选，用于打包）
+
+---
+
+## 许可证
+
+MIT License
+
+---
+
+## 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/amazing-feature`)
+3. 提交更改 (`git commit -m 'feat: add amazing feature'`)
+4. 推送到分支 (`git push origin feature/amazing-feature`)
+5. 创建 Pull Request
