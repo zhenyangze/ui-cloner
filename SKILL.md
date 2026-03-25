@@ -72,7 +72,29 @@ Populate each file with the synthesized data from Step 3.
 
 For the SKILL.md content and structure of each reference file, see → `references/skill-template.md`
 
-### Step 5 — Package as .skill File
+### Step 5 — Visual Verification (Optional)
+
+Ask the user:
+
+> "Would you like me to generate a sample page using this design system and compare it visually against your original screenshots to verify accuracy before packaging?"
+
+If the user agrees:
+1. Use the draft skill files with `ui-ux-pro-max` to generate a representative page (e.g. the main page from the screenshots) in the user's preferred tech stack (ask if unknown).
+2. Take or ask the user to provide a screenshot of the rendered output.
+3. Use `mcp__zai-mcp-server__ui_diff_check` to compare the generated page against the original reference screenshot:
+   - `expected_image_source`: the original reference screenshot
+   - `actual_image_source`: the rendered output screenshot
+   - `prompt`: "Compare these two UI screenshots. Identify discrepancies in colors, typography, spacing, component shapes, layout structure, and overall visual style. List each difference with its severity (critical / minor)."
+4. Based on the diff report:
+   - For **critical** differences (wrong colors, missing components, broken layout): update the relevant reference file in the skill (`design-tokens.md`, `components.md`, or `layout.md`) to correct the spec.
+   - For **minor** differences: document them as known variations in `style-guide.md`.
+5. Repeat the verify → diff → correct cycle until no critical differences remain, or the user is satisfied.
+
+If the user declines, skip this step and proceed directly to packaging.
+
+### Step 6 — Package as .skill File
+
+Once the design system is verified (or the user skips verification), package the skill.
 
 Run the packager with the determined output path from Step 1:
 ```bash
@@ -80,26 +102,6 @@ python3 /Users/zhenyangze/.claude/skills/skill-creator/scripts/package_skill.py 
 ```
 
 Report the output path of the generated `.skill` file to the user.
-
-### Step 6 — Visual Verification (Optional)
-
-After packaging, ask the user:
-
-> "Would you like me to generate a sample page using the new skill and compare it visually against your original screenshots to verify accuracy?"
-
-If the user agrees:
-1. Use the generated skill with `ui-ux-pro-max` to generate a representative page (e.g. the main page from the screenshots) in the user's preferred tech stack (ask if unknown).
-2. Take or ask the user to provide a screenshot of the rendered output.
-3. Use `mcp__zai-mcp-server__ui_diff_check` to compare the generated page against the original reference screenshot:
-   - `expected_image_source`: the original reference screenshot
-   - `actual_image_source`: the rendered output screenshot
-   - `prompt`: "Compare these two UI screenshots. Identify discrepancies in colors, typography, spacing, component shapes, layout structure, and overall visual style. List each difference with its severity (critical / minor)."
-4. Based on the diff report:
-   - For **critical** differences (wrong colors, missing components, broken layout): update the relevant reference file in the skill (`design-tokens.md`, `components.md`, or `layout.md`) to correct the spec, then re-package.
-   - For **minor** differences: document them as known variations in `style-guide.md`.
-5. Repeat the verify → diff → correct cycle until no critical differences remain, or the user is satisfied.
-
-If the user declines, skip this step.
 
 ### Step 7 — Confirm and Offer Next Step
 
@@ -117,4 +119,4 @@ If the user says yes, invoke `ui-ux-pro-max` with the generated skill's design t
 - The generated skill must be self-contained: someone with no access to the original screenshots should be able to use it to faithfully reproduce the UI.
 - Tech stack is intentionally left open — the generated skill describes the design, not the implementation.
 - **Save location priority**: always prefer project-local (`.claude/skills/`) over global (`~/.claude/skills/`) to avoid polluting the user's global environment. Only use global as a fallback when no project directory is detected.
-- **Visual verification**: the diff-and-correct loop (Step 6) is optional but strongly recommended for high-fidelity reproduction. Always ask the user before running it.
+- **Visual verification**: the diff-and-correct loop (Step 5) is optional but strongly recommended for high-fidelity reproduction. Always ask the user before running it.
